@@ -1,4 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
+
+if (WIN32)
+    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{CMAKE_TOOLCHAIN_FILE})
+        set(CMAKE_TOOLCHAIN_FILE $ENV{CMAKE_TOOLCHAIN_FILE})
+    endif()
+    message("Using CMAKE_TOOLCHAIN_FILE ${ENV} ${CMAKE_TOOLCHAIN_FILE}")
+
+    # Uncomment this to dump env vars:
+    #get_cmake_property(_variableNames VARIABLES)
+    #list (SORT _variableNames)
+    #foreach (_variableName ${_variableNames})
+    #    message(STATUS "${_variableName}=${${_variableName}}")
+    #endforeach()
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 project( node-leveldb )
 add_subdirectory( leveldb-mcpe )
@@ -21,13 +36,18 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
 # Include N-API wrappers
-execute_process(COMMAND node -p "require('node-addon-api').include"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE NODE_ADDON_API_DIR
-        )
-string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
+include_directories(
+    ${CMAKE_SOURCE_DIR}/node_modules/node-addon-api 
+    ${CMAKE_SOURCE_DIR}/node_modules/node-addon-api/src
+    ${CMAKE_JS_INC}
+)
+
+message(STATUS "Include dirs")
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
+
 
 # define NPI_VERSION
 add_definitions(-DNAPI_VERSION=3)
