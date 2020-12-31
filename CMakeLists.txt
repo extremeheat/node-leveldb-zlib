@@ -1,9 +1,17 @@
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 project( node-leveldb )
 add_subdirectory( leveldb-mcpe )
 
-if (WIN32)
+if (UNIX)
+    add_definitions(-DLEVELDB_PLATFORM_POSIX "-DDLLX=")
+    if(APPLE)
+        add_definitions(-DOS_MACOSX)
+    endif()
+elseif (WIN32)
     add_definitions(-DLEVELDB_PLATFORM_WINDOWS "-DDLLX=__declspec(dllexport)")
 endif()
+
 include_directories("leveldb-mcpe/include"})
 
 include_directories(${CMAKE_JS_INC})

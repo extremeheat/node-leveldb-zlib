@@ -7,4 +7,5 @@ js
 _*
 
 tests/test
+tests/mctestdb/*
 leveldb-mcpe
