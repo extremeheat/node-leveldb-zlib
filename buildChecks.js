@@ -10,6 +10,11 @@ if (!fs.existsSync('./leveldb-mcpe/include')) {
 
 if (process.platform == 'win32') {
   if (!process.env.CMAKE_TOOLCHAIN_FILE) {
+
+    const exec = require("child_process");
+    // Try to set CMAKE_TOOLCHAIN_FILE with pre-packaged vcpkg
+    exec.execSync('cd helpers && win-build.bat')
+
     console.error('******************* READ ME ****************\n')
     console.error(' CMAKE_TOOLCHAIN_FILE was not set. Please see the Windows build steps at https://github.com/extremeheat/node-leveldb-zlib/\n')
     console.error(' The build below probably failed.\n')
