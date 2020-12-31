@@ -8,7 +8,7 @@ LevelDB bindings for Node.js with zlib compression that actually builds!
 No prebuilds at the moment, you need to have required build dependencies for the install to complete:
 
 ## Build
-**If cloning from git, you must clone this repo recursively!**
+**If cloning from git, you must clone this repo recursively!** If you installed with npm, *omit* the `git clone` steps below and replace them with the npm install command above.
 
 `git clone --recursive https://github.com/extremeheat/node-leveldb-zlib.git`
 
@@ -26,7 +26,13 @@ If you don't already have vcpkg installed, install it with the steps at https://
 
 In vcpkg, install zlib: run `vcpkg install zlib`
 
-Then set environment variable `DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake`
+Then [set environment variable](https://www.onmsft.com/how-to/how-to-set-an-environment-variable-in-windows-10) `DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake`.
+
+Then:
+```
+git clone --recursive https://github.com/extremeheat/node-leveldb-zlib.git && cd node-leveldb-zlib
+npm install
+```
 
 ### Build on mac
 
