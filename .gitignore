@@ -1,0 +1,10 @@
+node_modules
+
+# Build data
+build
+js
+*.log
+_*
+
+tests/test
+leveldb-mcpe
