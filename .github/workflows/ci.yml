@@ -36,11 +36,11 @@ jobs:
         name: dist-${{ matrix.os }}
         path: |
           *.node
-#   debug:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Debug Action
-#       uses: hmarr/debug-action@v1.0.0
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Debug Action
+      uses: hmarr/debug-action@v1.0.0
   release:
     needs: build
     runs-on: ubuntu-latest
