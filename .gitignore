@@ -1,7 +1,7 @@
 node_modules
 
 # Build data
-build*
+build/
 js
 *.log
 _*
