@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "checkEnv": "node buildChecks.js",
+    "preinstall": "git submodule init && git submodule update",
     "install": "node buildChecks.js && cmake-js compile",
     "build": "tsc",
     "test": "npm run build && cd tests && ts-node iterate.ts"
