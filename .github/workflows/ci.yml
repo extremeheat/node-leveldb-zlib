@@ -6,11 +6,11 @@ name: Node Native Build CI
 on:
   push:
     branches: [ master ]
+    tags:
+      - v*
   pull_request:
     branches: [ master ]
   # Run on new tags
-  create:
-    tags:
 
 jobs:
   build:
