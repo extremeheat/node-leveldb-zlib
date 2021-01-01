@@ -14,7 +14,7 @@ const cp = require('child_process')
 if (!fs.existsSync('./leveldb-mcpe/include')) {
 
   console.info('Cloning submodules...')
-  cp.execSync('git submodules init && git submodules update')
+  cp.execSync('git submodule init && git submodule update')
 
   if (!fs.existsSync('./leveldb-mcpe/include')) {
     console.error('******************* READ ME ****************\n')
