@@ -7,6 +7,7 @@ js
 _*
 prebuilds
 helpers/vcpkg-export
+helpers/CMakeExtras.txt
 tests/test
 tests/mctestdb/*
 leveldb-mcpe
