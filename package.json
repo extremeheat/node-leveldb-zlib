@@ -4,6 +4,7 @@
   "description": "Node.js bindings for leveldb with zlib",
   "main": "index.js",
   "scripts": {
+    "checkEnv": "node buildChecks.js",
     "install": "node buildChecks.js && cmake-js compile",
     "build": "tsc",
     "test": "npm run build && cd tests && ts-node iterate.ts"
