@@ -33,7 +33,7 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
     - run: npm run postci
-      id: posti
+      id: postci
     - name: Display structure of downloaded files
       run: ls -R
 
@@ -65,5 +65,3 @@ jobs:
           path: helpers
       - name: Display structure of downloaded files
         run: ls -R
-          
-
