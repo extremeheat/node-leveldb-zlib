@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "checkEnv": "node buildChecks.js",
-    "install": "node buildChecks.js && cmake-js compile",
+    "install": "dir && node buildChecks.js && cmake-js compile",
     "build": "tsc",
     "test": "npm run build && cd tests && ts-node iterate.ts"
   },
