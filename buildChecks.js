@@ -34,3 +34,5 @@ if (process.platform == 'win32') {
     console.error('******************* READ ME ****************\n')
   }
 }
+
+module.exports = () => {}

@@ -9,3 +9,5 @@ if (process.platform == 'win32') {
 } else {
     proc.execSync('ls -r')
 }
+
+module.exports = {}
