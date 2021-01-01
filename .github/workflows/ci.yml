@@ -32,14 +32,15 @@ jobs:
     - run: npm install
     - run: npm run build --if-present
     - run: npm test
-    - run: echo ${{ github.event }}
+    - run: npm run postci
+      id: postci
     - name: Display structure of downloaded files
       run: ls -R
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: dist-${{ matrix.os }}
+        name: dist-${{ steps.postci.outputs.PLATFORM_STRING }}
         path: |
           build/Release/*.node
   debug:
@@ -64,5 +65,3 @@ jobs:
           path: helpers
       - name: Display structure of downloaded files
         run: ls -R
-          
-
