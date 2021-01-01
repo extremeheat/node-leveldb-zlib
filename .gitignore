@@ -6,7 +6,7 @@ js
 *.log
 _*
 prebuilds
-
+helpers/vcpkg-export
 tests/test
 tests/mctestdb/*
 leveldb-mcpe
