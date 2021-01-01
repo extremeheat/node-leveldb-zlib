@@ -15,29 +15,29 @@ async function runChecks() {
   if (!fs.existsSync('./leveldb-mcpe/include')) {
 
     console.info('Cloning submodules...')
-    cp.execSync('git submodule init', {stdio: 'inherit'})
-    cp.execSync('git submodule update', {stdio: 'inherit'})
+    cp.execSync('git submodule init', { stdio: 'inherit' })
+    cp.execSync('git submodule update', { stdio: 'inherit' })
 
-    await new Promise((res,rej) => {
-      setTimeout(() => res(), 99999999)
-    })
-  
-    if (!fs.existsSync('./leveldb-mcpe/include')) {
-  
-      console.error('******************* READ ME ****************\n')
-      console.error(' Failed to install git submodules. Please create an issue at https://github.com/extremeheat/node-leveldb-zlib\n')
-      console.error('******************* READ ME ****************\n')
-      process.exit(1)   
+    if (!fs.existsSync('./leveldb-mcpe/include')) { // npm install does not clone submodules...
+
+      cp.execSync('git clone https://github.com/extremeheat/leveldb-mcpe') // so do it manually
+
+      if (!fs.existsSync('./leveldb-mcpe/include')) { //gie up
+        console.error('******************* READ ME ****************\n')
+        console.error(' Failed to install git submodules. Please create an issue at https://github.com/extremeheat/node-leveldb-zlib\n')
+        console.error('******************* READ ME ****************\n')
+        process.exit(1)
+      }
     }
   }
-  
+
   if (process.platform == 'win32') {
     if (!process.env.CMAKE_TOOLCHAIN_FILE) {
-  
+
       const exec = require("child_process");
       // Try to set CMAKE_TOOLCHAIN_FILE with pre-packaged vcpkg
       exec.execSync('cd helpers && win-build.bat')
-  
+
       if (!fs.existsSync('helpers/CMakeExtras.txt')) {
         console.error('******************* READ ME ****************\n')
         console.error(' CMAKE_TOOLCHAIN_FILE was not set. Please see the Windows build steps at https://github.com/extremeheat/node-leveldb-zlib/\n')
@@ -69,4 +69,4 @@ runChecks().then(
 
 
 
-module.exports = () => {}
+module.exports = () => { }
