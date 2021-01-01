@@ -6,12 +6,16 @@ if (WIN32)
     endif()
     message("Using CMAKE_TOOLCHAIN_FILE ${ENV} ${CMAKE_TOOLCHAIN_FILE}")
 
+    if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        message(FATAL_ERROR "Cmake toolchain file was not found. Set it as an system enviornment variable and restart")
+    endif()
+
     # Uncomment this to dump env vars:
-    #get_cmake_property(_variableNames VARIABLES)
-    #list (SORT _variableNames)
-    #foreach (_variableName ${_variableNames})
-    #    message(STATUS "${_variableName}=${${_variableName}}")
-    #endforeach()
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
