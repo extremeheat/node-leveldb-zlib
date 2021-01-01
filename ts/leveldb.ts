@@ -51,7 +51,7 @@ export class LevelDB implements DB {
 
   async open() {
     return new Promise((res, rej) => {
-      binding.db_open(this.context, this.path, this.open, (err) => err ? rej(err) : res(true))
+      binding.db_open(this.context, this.path, this.options, (err) => err ? rej(err) : res(true))
       this.status = 'open'
       console.debug('DB was opened!')
     })
