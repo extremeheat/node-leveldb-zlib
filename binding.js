@@ -1,7 +1,12 @@
 const fs = require('fs')
 const helper = require('./helpers/buildPath.js')
-var SegfaultHandler = require('segfault-handler')
-SegfaultHandler.registerHandler("crash.log")
+
+if (!process.versions.electron) { 
+  // Electron has its own crash handler, and segfault-handler
+  // uses NAN which is a hassle, so only load outside electron
+  var SegfaultHandler = require('segfault-handler')
+  SegfaultHandler.registerHandler("crash.log")
+}
 
 var bindings
 var pathToSearch = helper.getPath()
