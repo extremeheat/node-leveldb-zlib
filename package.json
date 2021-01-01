@@ -7,7 +7,7 @@
     "checkEnv": "node buildChecks.js",
     "preinstall": "git submodule update --init --recursive",
     "install": "node buildChecks.js && cmake-js compile",
-    "postinstall": "tsc",
+    "prepare": "tsc",
     "build": "tsc",
     "test": "npm run build && cd tests && ts-node iterate.ts"
   },
