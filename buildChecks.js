@@ -2,14 +2,24 @@
 const fs = require('fs')
 const cp = require('child_process')
 
-// function checkIfPrebuildExists() {
+function checkIfPrebuildExists() {
+  try {
+    const bindings = require('./binding')
+    if (!bindings) throw 'Bindings are undefined'
+    console.log('[leveldb] not building as already have prebuild')
+    return true
+  } catch (e) {
+    console.log('[leveldb] need to build')
+  }
+}
 
-// }
+var runCmake = true
 
-// if (checkIfPrebuildExists()) {
-//   console.log('Using prebuild at ')
-//   process.exit(0)
-// }
+if (!process.env.FORCE_BUILD) {
+  if (checkIfPrebuildExists()) {
+    runCmake = false
+  }
+}
 
 async function runChecks() {
   if (!fs.existsSync('./leveldb-mcpe/include')) {
@@ -63,10 +73,13 @@ async function runChecks() {
   }
 }
 
-runChecks().then(
-  () => console.log('Build checks are passing!')
-)
-
-
+if (runCmake) {
+  runChecks().then(
+    () => {
+      console.log('Build checks are passing! Building...')
+      cp.execSync(`cmake-js compile`, {stdio: 'inherit'})
+    }
+  )
+}
 
 module.exports = () => { }
