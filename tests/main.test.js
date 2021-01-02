@@ -3,6 +3,7 @@ const fs = require('fs')
 const cp = require('child_process')
 
 test('create and write new db', async () => {
+  try { fs.mkdirSync('test') } catch {}
   let db = new LevelDB('./test/test', { createIfMissing: true })
   await db.open()
   await db.put('Hello', 'World!')
