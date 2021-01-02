@@ -64,6 +64,8 @@ jobs:
         with:
           path: helpers
       - run: npm install
+        env: 
+          SKIP_BUILD: true
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
