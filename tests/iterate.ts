@@ -1,9 +1,25 @@
 const { assert } = require('assert');
-const { LevelDB } = require('../js/leveldb')
+const { LevelDB } = require('..')
+const fs = require('fs')
+const cp = require('child_process')
+
+function rmdir(f) {
+  if (process.platform == 'win32') {
+    cp.execSync('rmdir /s /q ' + __dirname + f.replace('./', '\\'))
+  } else {
+    cp.execSync('rm -fr ' + __dirname.replace('./', '/') + f)
+  }
+}
 
 async function testIterate() {
   let db = new LevelDB('test', { createIfMissing: true })
-  await db.open()
+  try {
+    await db.open()
+  } catch (e) {
+    await db.close()
+    throw e
+  }
+
   await db.put('Hello', 'World!')
   await db.put('I', 'Like')
   let f32a = new Float32Array(10)
@@ -25,23 +41,41 @@ async function testIterate() {
   await db.close()
 }
 
+async function runTest(i, create) {
+  let db = new LevelDB('test' + i, { createIfMissing: create })
+  try {
+    await db.open()
+  } catch (e) {
+    console.log("Caught Exception", e)
+    return
+  }
+  console.log('Opened!')
+  await db.put('hello', 'world')
+  console.log('Put!')
+  let ret = await db.get('hello')
+  console.log('Got', ret)
+  console.assert(ret == 'world')
+  await db.close()
+  return i
+}
+
 async function testMinecraft(path) {
 
   enum Tag {
     VersionNew = 44,
-		Data2D = 45,
-		Data2DLegacy = 46,
-		SubChunkPrefix = 47,
-		LegacyTerrain = 48,
-		BlockEntity = 49,
-		Entity = 50,
-		PendingTicks = 51,
-		BlockExtraData = 52,
+    Data2D = 45,
+    Data2DLegacy = 46,
+    SubChunkPrefix = 47,
+    LegacyTerrain = 48,
+    BlockEntity = 49,
+    Entity = 50,
+    PendingTicks = 51,
+    BlockExtraData = 52,
     BiomeState = 53,
     FinalizedState = 54,
     HardCodedSpawnAreas = 57,
-		VersionOld = 118
-	};
+    VersionOld = 118
+  };
 
   function readKey(buffer: Buffer) {
     let offset = 0
@@ -111,7 +145,7 @@ async function testMinecraft(path) {
         // version for pre 1.16.100
         read.push({ x: cx, z: cz, dim: dim, type: 'versionOld', key: buffer })
       } else if (otherDim && tagWithDim == Tag.HardCodedSpawnAreas) {
-        read.push({ x: cx, z: cz, dim: dim, type: 'spawnarea', key: buffer })        
+        read.push({ x: cx, z: cz, dim: dim, type: 'spawnarea', key: buffer })
       } else if (overworld && tagWithDim == Tag.HardCodedSpawnAreas) {
         read.push({ x: cx, z: cz, dim: dim, type: 'spawanarea', key: buffer })
       } else if (otherDim && tagWithDim == Tag.BiomeState) {
@@ -161,7 +195,17 @@ async function testMinecraft(path) {
 
 console.log('Test iteration')
 testIterate()
+for (var i = 0; i < 10; i++) {
+  runTest(i, i % 2 == 0).then((i) => {
+    if (i == null) return
+    try {
+      rmdir('./test' + i)
+    } catch (e) { console.log(e) }
+  })
+}
 console.log()
 testMinecraft(`./mctestdb/`).then(
-  () => console.log('Tests are passing! :)')
+  () => {
+    console.log('Tests are passing! :)')
+  }
 )

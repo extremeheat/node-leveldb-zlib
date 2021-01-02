@@ -11,10 +11,10 @@ module.exports = {
 
     let path = `./prebuilds/${plat}-${ver}-${arch}/`
     if (fs.existsSync(path)) {
-      console.log('[leveldb] using prebuild in ', path)
+      // console.log('[leveldb] using prebuild in ', path)
       return path
     } else {
-      console.log('[leveldb] building as prebuild not found in ', path)
+      // console.log('[leveldb] building as prebuild not found in ', path)
       return
     }
   },

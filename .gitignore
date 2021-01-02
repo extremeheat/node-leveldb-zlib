@@ -8,6 +8,6 @@ _*
 prebuilds
 helpers/vcpkg-export
 helpers/CMakeExtras.txt
-tests/test
+tests/test*
 tests/mctestdb/*
 leveldb-mcpe

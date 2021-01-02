@@ -36,13 +36,15 @@ interface DB {
 
 }
 
+globalThis.levelDbOpened = globalThis.levelDbOpened || new Set()
+
 export class LevelDB implements DB {
   context
   path: string
   options: LevelDBOptions
   status: string
 
-  constructor(path: string, options: LevelDBOptions) {
+  constructor(path: string, options: LevelDBOptions = {}) {
     this.context = binding.db_init()
     this.path = path
     this.options = options
@@ -50,16 +52,41 @@ export class LevelDB implements DB {
   }
 
   async open() {
+    if (globalThis.levelDbOpened.has(this.path)) {
+      throw 'DB already has an open context, did you close it properly?'
+    }
+    globalThis.levelDbOpened.add(this.path)
     return new Promise((res, rej) => {
-      binding.db_open(this.context, this.path, this.options, (err) => err ? rej(err) : res(true))
-      this.status = 'open'
-      console.debug('DB was opened!')
+      binding.db_open(this.context, this.path, this.options, (err) => {
+        if (err) {
+          console.warn('[leveldb] Failed to open db ', this.path, this.options, err)
+          rej(err)
+        } else {
+          this.status = 'open'
+          console.debug('DB was opened!')
+          globalThis.levelDbOpened.add(this.path)
+          res(true)
+        }
+      })
     })
   }
 
+  isOpen(): boolean {
+    return this.status === 'open'
+  }
+
   async close() {
+    if (!this.isOpen()) return
     return new Promise((res, rej) => 
-      binding.db_close(this.context, (err) => err ? rej(err) : res(true))
+      binding.db_close(this.context, (err) => {
+        if (err) {
+          rej(err)
+        } else {
+          this.status = 'closed'
+          globalThis.levelDbOpened.delete(this.path)
+          res(true)
+        }
+      })
     )
   }
 
@@ -72,12 +99,16 @@ export class LevelDB implements DB {
   }
 
   put(key: Buffer | string, value: Buffer | string, options: OpOpts = {}) {
+    if (this.status !== 'open') throw 'DB is not open'
+    if (!key.length) throw 'Empty key'
     return new Promise((res, rej) => {
       binding.db_put(this.context, key, value, options, err => err ? rej(err) : res(true))
     })
   }
 
   get(key: Buffer | string, options: OpOpts = {}) {
+    if (this.status !== 'open') throw 'DB is not open'
+    if (!key.length) throw 'Empty key'
     return new Promise((res, rej) => {
       binding.db_get(this.context, key, options, (err, val) => err ? rej(err) : res(val))
     })
