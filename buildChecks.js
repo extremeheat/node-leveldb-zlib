@@ -20,6 +20,9 @@ if (!process.env.FORCE_BUILD) {
     runCmake = false
   }
 }
+if (process.env.SKIP_BUILD) {
+  runCmake = false
+}
 
 async function runChecks() {
   if (!fs.existsSync('./leveldb-mcpe/include')) {
