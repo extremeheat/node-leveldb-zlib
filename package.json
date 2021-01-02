@@ -10,6 +10,7 @@
     "build": "tsc",
     "postci": "node helpers/postCI.js",
     "prepublish": "cd helpers && node npmPublish.js",
+    "release": "cd helpers && node npmRelease.js",
     "test": "npm run build && cd tests && jest --silent"
   },
   "author": "extremeheat",
