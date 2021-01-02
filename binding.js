@@ -11,8 +11,13 @@ if (!process.versions.electron) {
 var bindings
 var pathToSearch = helper.getPath()
 if (pathToSearch) {
-  bindings = require(pathToSearch + '/node-leveldb.node')
-} else {
+  try {
+    bindings = require(pathToSearch + '/node-leveldb.node')
+  } catch (e) {
+    // console.warn('[leveldb] did not find lib in ', pathToSearch + '/node-leveldb.node')
+  }
+}
+if (!bindings) {
   bindings = require('bindings')('node-leveldb.node')
 }
 

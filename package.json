@@ -10,13 +10,14 @@
     "prepare": "tsc",
     "build": "tsc",
     "postci": "node helpers/postCI.js",
-    "test": "npm run build && cd tests && ts-node iterate.ts"
+    "test": "npm run build && cd tests && jest --silent"
   },
   "author": "extremeheat",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^14.14.16",
     "cmake-js": "^6.1.0",
+    "jest": "^26.6.3",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },
