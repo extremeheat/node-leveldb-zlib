@@ -63,6 +63,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: helpers
+      - run: npm install
       - run: npm publish
       - name: Display structure of downloaded files
         run: ls -R
