@@ -65,5 +65,7 @@ jobs:
           path: helpers
       - run: npm install
       - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
       - name: Display structure of downloaded files
         run: ls -R
