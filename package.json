@@ -6,6 +6,7 @@
   "scripts": {
     "checkEnv": "node buildChecks.js",
     "install": "node buildChecks.js",
+    "postinstall": "node buildChecks.js post",
     "prepare": "tsc",
     "build": "tsc",
     "postci": "node helpers/postCI.js",
