@@ -41,7 +41,7 @@ jobs:
       with:
         name: dist-${{ steps.postci.outputs.PLATFORM_STRING }}
         path: |
-          build/Release/*.node
+          build/Release/*
   debug:
     runs-on: ubuntu-latest
     steps:

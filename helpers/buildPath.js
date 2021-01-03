@@ -12,13 +12,6 @@ module.exports = {
 
     let bpath = `./prebuilds/${plat}-${ver}-${arch}/`
     return bpath
-    if (fs.existsSync(path.join(__dirname, bpath))) {
-      console.log('[leveldb] using prebuild in ', bpath)
-      return bpath
-    } else {
-      console.log('[leveldb] building as prebuild not found in ', path.join(__dirname, bpath))
-      return
-    }
   },
   
   getPlatformString() {

@@ -138,7 +138,7 @@ test('minecraft', async () => {
       } else if (otherDim && tagWithDim == Tag.FinalizedState) {
         // finalized state for other dimensions
         read.push({ x: cx, z: cz, dim: dim, type: 'finalizedState', key: buffer })
-      } else if (overworld && tagWithDim == Tag.VersionOld) {
+      } else if (overworld && tagOver == Tag.VersionOld) {
         // version for pre 1.16.100
         read.push({ x: cx, z: cz, dim: dim, type: 'versionOld', key: buffer })
       } else if (otherDim && tagWithDim == Tag.VersionOld) {
@@ -146,7 +146,7 @@ test('minecraft', async () => {
         read.push({ x: cx, z: cz, dim: dim, type: 'versionOld', key: buffer })
       } else if (otherDim && tagWithDim == Tag.HardCodedSpawnAreas) {
         read.push({ x: cx, z: cz, dim: dim, type: 'spawnarea', key: buffer })
-      } else if (overworld && tagWithDim == Tag.HardCodedSpawnAreas) {
+      } else if (overworld && tagOver == Tag.HardCodedSpawnAreas) {
         read.push({ x: cx, z: cz, dim: dim, type: 'spawanarea', key: buffer })
       } else if (otherDim && tagWithDim == Tag.BiomeState) {
         read.push({ x: cx, z: cz, dim: dim, type: 'biomeState', key: buffer })
