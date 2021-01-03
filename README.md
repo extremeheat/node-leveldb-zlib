@@ -3,16 +3,20 @@ LevelDB bindings for Node.js with zlib compression that actually builds!
 
 ## Install
 
-`npm install leveldb-zlib@extremeheat/node-leveldb-zlib`
+```sh
+npm install leveldb-zlib
+```
 
-No prebuilds at the moment, you need to have required build dependencies for the install to complete:
+Prebuilds are provided for 64-bit Windows 10, Linux and macOS Catalina. If a prebuild does not work, create an issue ad set enviornment variable FORCE_BUILD to force a manual build.
+
+See [#Usage](#Usage) below.
 
 ## Build
-**If cloning from git, you must clone this repo recursively!** If you installed with npm, *omit* the `git clone` steps below and replace them with the npm install command above.
+
+If cloning from git, you must clone this repo recursively. If you are installing with npm, *omit* the `git clone` steps below and replace them with the npm install command above.
 
 `git clone --recursive https://github.com/extremeheat/node-leveldb-zlib.git`
 
-OR if you already cloned without --recursive, run `git submodules init && git submodules update`
 
 ### Build on Linux
 ```

@@ -4,8 +4,12 @@ const helper = require('./helpers/buildPath.js')
 if (!process.versions.electron) { 
   // Electron has its own crash handler, and segfault-handler
   // uses NAN which is a hassle, so only load outside electron
-  var SegfaultHandler = require('segfault-handler')
-  SegfaultHandler.registerHandler("crash.log")
+  try {
+    var SegfaultHandler = require('segfault-handler')
+    SegfaultHandler.registerHandler("crash.log")
+  } catch (e) {
+    console.log('[leveldb] segfault handler is not installed. If you run into crashing issues, install it with `npm i -D segfault-handler` to get debug info on native crashes')
+  }
 }
 
 var bindings
@@ -14,7 +18,7 @@ if (pathToSearch) {
   try {
     bindings = require(pathToSearch + '/node-leveldb.node')
   } catch (e) {
-    // console.warn('[leveldb] did not find lib in ', pathToSearch + '/node-leveldb.node')
+    console.warn('[leveldb] did not find lib in ', pathToSearch + '/node-leveldb.node')
   }
 }
 if (!bindings) {

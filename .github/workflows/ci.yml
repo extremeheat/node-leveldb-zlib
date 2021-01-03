@@ -34,9 +34,8 @@ jobs:
     - run: npm test
     - run: npm run postci
       id: postci
-    - name: Display structure of downloaded files
-      run: ls -R
-
+    # - name: Display structure of downloaded files
+    #   run: ls -R
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
