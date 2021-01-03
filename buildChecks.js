@@ -81,6 +81,7 @@ if (runCmake) {
   runChecks().then(
     () => {
       console.log('Build checks are passing! Building...')
+      cp.execSync(`ls`, {stdio: 'inherit'})
       cp.execSync(`cmake-js compile`, {stdio: 'inherit'})
     }
   )
