@@ -7,7 +7,7 @@ LevelDB bindings for Node.js with zlib compression that actually builds!
 npm install leveldb-zlib
 ```
 
-Prebuilds are provided for 64-bit Windows 10, Linux and macOS Catalina. If a prebuild does not work, create an issue ad set enviornment variable FORCE_BUILD to force a manual build.
+Prebuilds are provided for 64-bit Windows 10, Linux and macOS Catalina. If a prebuild does not work, create an issue and set enviornment variable FORCE_BUILD to force a manual build.
 
 See [#Usage](#Usage) below.
 
