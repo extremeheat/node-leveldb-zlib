@@ -1,5 +1,6 @@
 const fs = require('fs')
 const os = require('os')
+const path = require('path')
 
 module.exports = {
   getPath() {
@@ -9,8 +10,8 @@ module.exports = {
     let arch = process.arch
     let ver = _osVersion.split('.', 1)
 
-    let path = `./prebuilds/${plat}-${ver}-${arch}/`
-    if (fs.existsSync(path)) {
+    let bpath = `./prebuilds/${plat}-${ver}-${arch}/`
+    if (fs.existsSync(path.join(__dirname, bpath))) {
       // console.log('[leveldb] using prebuild in ', path)
       return path
     } else {
