@@ -1,5 +1,5 @@
-const fs = require('fs')
 const helper = require('./helpers/buildPath.js')
+const path = require('path')
 
 if (!process.versions.electron) { 
   // Electron has its own crash handler, and segfault-handler
@@ -15,10 +15,11 @@ if (!process.versions.electron) {
 var bindings
 var pathToSearch = helper.getPath()
 if (pathToSearch) {
+  var rpath = path.join(__dirname, pathToSearch, '/node-leveldb.node')
   try {
-    bindings = require(pathToSearch + '/node-leveldb.node')
+    bindings = require(rpath)
   } catch (e) {
-    console.warn('[leveldb] did not find lib in ', pathToSearch + '/node-leveldb.node')
+    console.warn('[leveldb] did not find lib in ', rpath + '/node-leveldb.node')
   }
 }
 if (!bindings) {

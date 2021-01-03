@@ -9,6 +9,7 @@ function checkIfPrebuildExists() {
     console.log('[leveldb] not building as already have prebuild')
     return true
   } catch (e) {
+    console.log(e)
     console.log('[leveldb] need to build')
   }
 }
