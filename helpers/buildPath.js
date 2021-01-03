@@ -10,12 +10,12 @@ module.exports = {
     let arch = process.arch
     let ver = _osVersion.split('.', 1)
 
-    let bpath = `./prebuilds/${plat}-${ver}-${arch}/`
+    let bpath = `../prebuilds/${plat}-${ver}-${arch}/`
     if (fs.existsSync(path.join(__dirname, bpath))) {
-      // console.log('[leveldb] using prebuild in ', path)
+      console.log('[leveldb] using prebuild in ', path)
       return path
     } else {
-      // console.log('[leveldb] building as prebuild not found in ', path)
+      console.log('[leveldb] building as prebuild not found in ', path.join(__dirname, bpath))
       return
     }
   },
