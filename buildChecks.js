@@ -84,7 +84,7 @@ if (runCmake) {
   runChecks().then(
     () => {
       console.log('Build checks are passing! Building...')
-      cp.execSync(`ls -a -R`, {stdio: 'inherit'})
+      cp.execSync(`ls -a -R ./.staging/`, {stdio: 'inherit'})
       cp.execSync(`ls -a -R ..`, {stdio: 'inherit'})
       try {
         cp.execSync('cmake-js --help')
