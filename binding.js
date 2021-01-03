@@ -19,7 +19,8 @@ if (pathToSearch) {
   try {
     bindings = require(rpath)
   } catch (e) {
-    console.warn('[leveldb] did not find lib in ', rpath + '/node-leveldb.node')
+    console.log(e)
+    console.warn('[leveldb] did not find lib in ', rpath)
   }
 }
 if (!bindings) {
