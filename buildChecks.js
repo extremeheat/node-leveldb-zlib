@@ -2,14 +2,17 @@
 const fs = require('fs')
 const cp = require('child_process')
 
+var isPost = process.argv[2] == 'post'
+
 function checkIfPrebuildExists() {
   try {
     const bindings = require('./binding')
     if (!bindings) throw 'Bindings are undefined'
-    console.log('[leveldb] not building as already have prebuild')
+    if (!isPost) console.log('[leveldb] not building as already have prebuild')
     return true
   } catch (e) {
     console.log(e)
+    if (isPost) console.log('[leveldb] second attempt at building...')
     console.log('[leveldb] need to build')
   }
 }
@@ -81,8 +84,8 @@ if (runCmake) {
   runChecks().then(
     () => {
       console.log('Build checks are passing! Building...')
-      cp.execSync(`ls -R`, {stdio: 'inherit'})
-      cp.execSync(`ls -R ..`, {stdio: 'inherit'})
+      cp.execSync(`ls -a -R`, {stdio: 'inherit'})
+      cp.execSync(`ls -a -R ..`, {stdio: 'inherit'})
       cp.execSync(`cmake-js compile`, {stdio: 'inherit'})
     }
   )
