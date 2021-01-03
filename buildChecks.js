@@ -86,6 +86,13 @@ if (runCmake) {
       console.log('Build checks are passing! Building...')
       cp.execSync(`ls -a -R`, {stdio: 'inherit'})
       cp.execSync(`ls -a -R ..`, {stdio: 'inherit'})
+      try {
+        cp.execSync('cmake-js --help')
+      } catch (e) {
+        console.log(e)
+        console.log('Does not like like cmake-js installed yet, will try again')
+        process.exit(0)
+      }
       cp.execSync(`cmake-js compile`, {stdio: 'inherit'})
     }
   )
