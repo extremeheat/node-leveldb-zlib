@@ -6,14 +6,14 @@ const binding = require('../binding')
 export type LevelDBOptions = {
   bufferKeys?: boolean
   snapshots?: boolean
-  permanence?: true
-  seek?: true
-  clear?: true
-  createIfMissing?: true
-  errorIfExists?: true
+  permanence?: boolean
+  seek?: boolean
+  clear?: boolean
+  createIfMissing?: boolean
+  errorIfExists?: boolean
   additionalMethods?: {
-    approximateSize?: true
-    compactRange?: true
+    approximateSize?: boolean
+    compactRange?: boolean
   }
 }
 
@@ -28,7 +28,7 @@ export type OpOpts = { sync?: boolean }
 export type IterOpts = {
   reverse?: boolean, keys?: boolean, values?: boolean, fillCache?: boolean,
   keyAsBuffer?: boolean, valueAsBuffer?: boolean, limit?: number,
-  highWaterMark?: boolean, end? 
+  highWaterMark?: boolean, end?
   lt?, lte?, gt?, gte?
 }
 
@@ -37,6 +37,10 @@ interface DB {
 }
 
 globalThis.levelDbOpened = globalThis.levelDbOpened || new Set()
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export class LevelDB implements DB {
   context
@@ -56,6 +60,7 @@ export class LevelDB implements DB {
       throw 'DB already has an open context, did you close it properly?'
     }
     globalThis.levelDbOpened.add(this.path)
+    await delay(100) // (mostly) unnoticeable hack to fix race bugs in bindings (#1)
     return new Promise((res, rej) => {
       binding.db_open(this.context, this.path, this.options, (err) => {
         if (err) {
@@ -63,7 +68,7 @@ export class LevelDB implements DB {
           rej(err)
         } else {
           this.status = 'open'
-          console.debug('DB was opened!')
+          console.debug('[leveldb] DB was opened at: ', this.path)
           globalThis.levelDbOpened.add(this.path)
           res(true)
         }
@@ -77,7 +82,7 @@ export class LevelDB implements DB {
 
   async close() {
     if (!this.isOpen()) return
-    return new Promise((res, rej) => 
+    return new Promise((res, rej) =>
       binding.db_close(this.context, (err) => {
         if (err) {
           rej(err)
@@ -136,37 +141,37 @@ export class LevelDB implements DB {
 
   approximateSize(start, end, callback) {
     if (start == null ||
-        end == null ||
-        typeof start === 'function' ||
-        typeof end === 'function') {
+      end == null ||
+      typeof start === 'function' ||
+      typeof end === 'function') {
       throw new Error('approximateSize() requires valid `start` and `end` arguments')
     }
-  
+
     if (typeof callback !== 'function') {
       throw new Error('approximateSize() requires a callback argument')
     }
-  
+
     start = LevelDB.serializeKey(start)
     end = LevelDB.serializeKey(end)
-  
+
     binding.db_approximate_size(this.context, start, end, callback)
   }
 
   compactRange(start, end, callback) {
     if (start == null ||
-        end == null ||
-        typeof start === 'function' ||
-        typeof end === 'function') {
+      end == null ||
+      typeof start === 'function' ||
+      typeof end === 'function') {
       throw new Error('compactRange() requires valid `start` and `end` arguments')
     }
-  
+
     if (typeof callback !== 'function') {
       throw new Error('compactRange() requires a callback argument')
     }
-  
+
     start = LevelDB.serializeKey(start)
     end = LevelDB.serializeKey(end)
-  
+
     binding.db_compact_range(this.context, start, end, callback)
   }
 
@@ -193,7 +198,7 @@ export class LevelDB implements DB {
    * The callback will be called when the destroy operation is complete, with a possible error argument.
    */
   destroy(location) {
-    return new Promise((res, rej) => 
+    return new Promise((res, rej) =>
       binding.destroy_db(location, err => err ? rej(err) : res(true))
     )
   }
@@ -209,8 +214,8 @@ export class LevelDB implements DB {
    * The callback will be called when the repair operation is complete, with a possible error argument.
    */
   repair(location: string) {
-    return new Promise((res, rej) => 
-      binding.repair_db(location, err => err ? rej(err) : res(true))    
+    return new Promise((res, rej) =>
+      binding.repair_db(location, err => err ? rej(err) : res(true))
     )
   }
 }
