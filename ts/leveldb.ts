@@ -2,6 +2,7 @@ import { ChainedBatch } from "./chainedBatch"
 import { Iterator } from "./iterator"
 
 const binding = require('../binding')
+const debug = require('debug')('leveldb')
 
 export type LevelDBOptions = {
   bufferKeys?: boolean
@@ -57,7 +58,7 @@ export class LevelDB implements DB {
 
   async open() {
     if (globalThis.levelDbOpened.has(this.path)) {
-      throw 'DB already has an open context, did you close it properly?'
+      throw new Error('DB already has an open context, did you close it properly?')
     }
     globalThis.levelDbOpened.add(this.path)
     await delay(100) // (mostly) unnoticeable hack to fix race bugs in bindings (#1)
@@ -65,10 +66,10 @@ export class LevelDB implements DB {
       binding.db_open(this.context, this.path, this.options, (err) => {
         if (err) {
           console.warn('[leveldb] Failed to open db ', this.path, this.options, err)
-          rej(err)
+          rej(Error(err))
         } else {
           this.status = 'open'
-          console.debug('[leveldb] DB was opened at: ', this.path)
+          debug('[leveldb] DB was opened at: ', this.path)
           globalThis.levelDbOpened.add(this.path)
           res(true)
         }
@@ -85,7 +86,7 @@ export class LevelDB implements DB {
     return new Promise((res, rej) =>
       binding.db_close(this.context, (err) => {
         if (err) {
-          rej(err)
+          rej(Error(err))
         } else {
           this.status = 'closed'
           globalThis.levelDbOpened.delete(this.path)
@@ -103,29 +104,38 @@ export class LevelDB implements DB {
     return Buffer.isBuffer(value) ? value : String(value)
   }
 
-  put(key: Buffer | string, value: Buffer | string, options: OpOpts = {}) {
-    if (this.status !== 'open') throw 'DB is not open'
-    if (!key.length) throw 'Empty key'
+  put(key: Buffer | string, value: Buffer | string, options: OpOpts = {}): Promise<boolean> {
+    if (this.status !== 'open') throw new Error('DB is not open')
+    if (!key.length) throw new Error('Empty key')
     return new Promise((res, rej) => {
-      binding.db_put(this.context, key, value, options, err => err ? rej(err) : res(true))
+      binding.db_put(this.context, key, value, options, err => err ? rej(Error(err)) : res(true))
     })
   }
 
-  get(key: Buffer | string, options: OpOpts = {}) {
-    if (this.status !== 'open') throw 'DB is not open'
-    if (!key.length) throw 'Empty key'
+  get(key: Buffer | string, options: OpOpts = {}): Promise<Buffer | null> {
+    if (this.status !== 'open') throw new Error('DB is not open')
+    if (!key.length) throw new Error('Empty key')
     return new Promise((res, rej) => {
-      binding.db_get(this.context, key, options, (err, val) => err ? rej(err) : res(val))
+      binding.db_get(this.context, key, options, (err, val) => {
+        if (err) {
+          if (err.message.includes('NotFound')) {
+            return res(null)
+          }
+          return rej(new Error(err))
+        } else {
+          return res(val)
+        }
+      })
     })
   }
 
-  async getAsString(key, options) {
+  async getAsString(key: Buffer | string, options: OpOpts = {}): Promise<string> {
     return String(await this.get(key, options))
   }
 
-  delete(key: Buffer | string, value: Buffer | string, options: OpOpts = {}) {
+  delete(key: Buffer | string, options: OpOpts = {}): Promise<boolean> {
     return new Promise((res, rej) => {
-      binding.db_del(this.context, key, options, err => err ? rej(err) : res(true))
+      binding.db_del(this.context, key, options, err => err ? rej(Error(err)) : res(true))
     })
   }
 
@@ -133,9 +143,9 @@ export class LevelDB implements DB {
     return new ChainedBatch(this)
   }
 
-  batch(operations: Operation[], options: OpOpts = {}) {
+  batch(operations: Operation[], options: OpOpts = {}): Promise<boolean> {
     return new Promise((res, rej) => {
-      binding.batch_do(this.context, operations, options, err => err ? rej(err) : res(true))
+      binding.batch_do(this.context, operations, options, err => err ? rej(Error(err)) : res(true))
     })
   }
 
@@ -187,7 +197,7 @@ export class LevelDB implements DB {
       throw new Error('cannot call iterator() before open()')
     }
     Iterator._setupIteratorOptions(options)
-    console.warn('using options', options)
+    debug('iter using options', options)
     return new Iterator(this, options)
   }
   // 
@@ -199,7 +209,7 @@ export class LevelDB implements DB {
    */
   destroy(location) {
     return new Promise((res, rej) =>
-      binding.destroy_db(location, err => err ? rej(err) : res(true))
+      binding.destroy_db(location, err => err ? rej(Error(err)) : res(true))
     )
   }
 
@@ -215,7 +225,7 @@ export class LevelDB implements DB {
    */
   repair(location: string) {
     return new Promise((res, rej) =>
-      binding.repair_db(location, err => err ? rej(err) : res(true))
+      binding.repair_db(location, err => err ? rej(Error(err)) : res(true))
     )
   }
 }
