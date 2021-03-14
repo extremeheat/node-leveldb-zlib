@@ -7,11 +7,11 @@ export class ChainedBatch {
     this.context = db.context
   }
 
-  put(key, value) {
+  put(key: Buffer, value: Buffer) {
     binding.batch_put(this.context, key, value)
   }
 
-  delete(key) {
+  delete(key: Buffer) {
     binding.batch_del(this.context, key)
   }
 
