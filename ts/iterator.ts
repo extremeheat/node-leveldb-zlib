@@ -1,6 +1,8 @@
 const binding = require('../binding')
 
 export class Iterator {
+  #lock?: Promise<any>
+
   context; cache
   finished: boolean
   db
@@ -11,43 +13,36 @@ export class Iterator {
     this.finished = false
   }
 
+  /**
+   * Seek to a position
+   * @param target Key to seek to. Empty string for start or end if reversed.
+   */
   seek(target) {
-    if (target.length === 0) {
-      throw new Error('cannot seek() to an empty target')
-    }
-
-    this.cache = null
+    if (target == null) throw Error('invalid seek target')
     binding.iterator_seek(this.context, target)
     this.finished = false
   }
 
-  _next() {
+  _next(): Promise<any> {
     return new Promise((res, rej) => {
       binding.iterator_next(this.context, (err, array, finished) => {
         if (err) {
           rej(err)
         } else {
-          this.cache = array
           this.finished = finished
-          res(true)
+          res({ array, finished })
         }
       })
     })
   }
 
   async next() {
-    if (this.cache && this.cache.length) {
-      return [ this.cache.pop(), this.cache.pop() ]
-    } else if (this.finished) {
-      return null
-    } else {
-      try {
-        await this._next()
-        return [ this.cache.pop(), this.cache.pop() ]
-      } catch {
-        return null
-      }
-    }
+    if (this.#lock) await this.#lock
+    if (this.finished) return null
+    this.#lock = this._next()
+    const val = await this.#lock
+    this.#lock = null
+    return val.finished ? null : val.array
   }
 
   end() {
