@@ -1,6 +1,6 @@
 {
   "name": "leveldb-zlib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node.js bindings for LevelDB with zlib",
   "main": "index.js",
   "scripts": {
