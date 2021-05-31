@@ -23,7 +23,7 @@ export class Iterator {
     this.finished = false
   }
 
-  _next(): Promise<any> {
+  private _next(): Promise<any> {
     return new Promise((res, rej) => {
       binding.iterator_next(this.context, (err, array, finished) => {
         if (err) {
