@@ -1,6 +1,6 @@
-Most of the API is very smilar to leveldown, you can refer to the docs [here](https://github.com/Level/leveldown#db--leveldownlocation). The primary differences are that instead of callbacks, all the exposed API uses promises, and to acquire an iterator, use db.getIterator().
+Most of the API is very similar to leveldown, you can refer to the docs [here](https://github.com/Level/leveldown#db--leveldownlocation). The primary differences are that instead of callbacks, all the exposed API uses promises, and to acquire an iterator, use db.getIterator().
 
-The primary API interface is the LevelDB class. It takes a path and optional options paramater. The default option is to not create a database if it doesn't exist.
+The primary API interface is the LevelDB class. It takes a path and optional options parameter. The default option is to not create a database if it doesn't exist.
 
 The keys and values can be either Buffers or Strings: strings will be converted to a buffer automatically.
 
@@ -69,10 +69,6 @@ export declare type ClearOpts = {
     limit: number;
 };
 export declare class LevelDB {
-    context: any;
-    path: string;
-    options: LevelDBOptions;
-    status: string;
     constructor(path: string, options?: LevelDBOptions);
     /**
      * Opens the database.
