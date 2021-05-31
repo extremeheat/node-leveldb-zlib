@@ -1,10 +1,12 @@
 const { LevelDB } = require('..')
 const fs = require('fs')
 const cp = require('child_process')
+const { join } = require('path')
+const assert = require('assert')
 
-test('create and write new db', async () => {
-  try { fs.mkdirSync('test') } catch {}
-  let db = new LevelDB('./test/test', { createIfMissing: true })
+it('create and write new db', async () => {
+  try { fs.mkdirSync(join(__dirname, 'test')) } catch { }
+  let db = new LevelDB(join(__dirname, './test/test'), { createIfMissing: true })
   await db.open()
   await db.put('Hello', 'World!')
   await db.put('I', 'Like')
@@ -26,9 +28,10 @@ test('create and write new db', async () => {
   return true
 })
 
-test('random read/write x10', async () => {
+it('random read/write x10', async function () {
+  this.timeout(10 * 1000)
   async function runTest(i, create) {
-    let db = new LevelDB('./test/test' + i, { createIfMissing: create })
+    let db = new LevelDB(join(__dirname, './test/test' + i), { createIfMissing: create })
 
     if (create) {
       await db.open()
@@ -44,7 +47,7 @@ test('random read/write x10', async () => {
     // console.log('Put!')
     let ret = await db.getAsString('hello')
     // console.log('Got', ret)
-    expect(ret).toEqual('world')
+    assert.equal(ret, 'world')
     // console.assert(ret == 'world')
     await db.close()
     return i
@@ -55,11 +58,12 @@ test('random read/write x10', async () => {
     promises.push(runTest(i, i % 2 == 0))
   }
   await Promise.all(promises)
+  cp.execSync(process.platform == 'win32' ? 'rmdir /s /q test' : 'rm -fr test', { cwd: __dirname })
 })
 
-test('minecraft', async () => {
+it('minecraft', async () => {
 
-  let path = './mctestdb'
+  let path = join(__dirname, './mctestdb')
 
   var Tag = {}
   Tag[Tag["VersionNew"] = 44] = "VersionNew";

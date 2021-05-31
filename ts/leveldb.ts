@@ -33,8 +33,12 @@ export type IterOpts = {
   lt?, lte?, gt?, gte?
 }
 
-interface DB {
-
+// Delete all entries or a range. Not guaranteed to be atomic. Accepts the following range options (with the same rules as on iterators):
+export type ClearOpts = {
+  gt?, gte?, // (greater than), gte (greater than or equal) define the lower bound of the range to be deleted. Only entries where the key is greater than (or equal to) this option will be included in the range. When reverse=true the order will be reversed, but the entries deleted will be the same.
+  lt?, lte?, // lte (less than or equal) define the higher bound of the range to be deleted. Only entries where the key is less than (or equal to) this option will be included in the range. When reverse=true the order will be reversed, but the entries deleted will be the same.
+  reverse: boolean, //delete entries in reverse order. Only effective in combination with limit, to remove the last N records.
+  limit: number,// limit the number of entries to be deleted. This number represents a maximum number of entries and may not be reached if you get to the end of the range first. A value of -1 means there is no limit. When reverse=true the entries with the highest keys will be deleted instead of the lowest keys.
 }
 
 globalThis.levelDbOpened = globalThis.levelDbOpened || new Set()
@@ -43,7 +47,7 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export class LevelDB implements DB {
+export class LevelDB {
   context
   path: string
   options: LevelDBOptions
@@ -56,6 +60,10 @@ export class LevelDB implements DB {
     this.status = 'closed'
   }
 
+  /**
+   * Opens the database.
+   * @returns {Promise} Resolves when the database has been opened.
+   */
   async open() {
     if (globalThis.levelDbOpened.has(this.path)) {
       throw new Error('DB already has an open context, did you close it properly?')
@@ -81,6 +89,10 @@ export class LevelDB implements DB {
     return this.status === 'open'
   }
 
+  /**
+   * Closes the database.
+   * @returns {Promise} Resolves when the database has been opened.
+   */
   async close() {
     if (!this.isOpen()) return
     return new Promise((res, rej) =>
@@ -149,7 +161,7 @@ export class LevelDB implements DB {
     })
   }
 
-  approximateSize(start, end, callback) {
+  async approximateSize(start, end) {
     if (start == null ||
       end == null ||
       typeof start === 'function' ||
@@ -157,32 +169,21 @@ export class LevelDB implements DB {
       throw new Error('approximateSize() requires valid `start` and `end` arguments')
     }
 
-    if (typeof callback !== 'function') {
-      throw new Error('approximateSize() requires a callback argument')
-    }
-
     start = LevelDB.serializeKey(start)
     end = LevelDB.serializeKey(end)
 
-    binding.db_approximate_size(this.context, start, end, callback)
+    return new Promise((res: any, rej) => binding.db_approximate_size(this.context, start, end, (err, ...a) => err ? rej(Error(err)) : res(...a)))
   }
 
-  compactRange(start, end, callback) {
-    if (start == null ||
-      end == null ||
-      typeof start === 'function' ||
-      typeof end === 'function') {
+  async compactRange(start, end) {
+    if (start == null || end == null || typeof start === 'function' || typeof end === 'function') {
       throw new Error('compactRange() requires valid `start` and `end` arguments')
     }
 
-    if (typeof callback !== 'function') {
-      throw new Error('compactRange() requires a callback argument')
-    }
-
     start = LevelDB.serializeKey(start)
     end = LevelDB.serializeKey(end)
 
-    binding.db_compact_range(this.context, start, end, callback)
+    return new Promise((res: any, rej) => binding.db_compact_range(this.context, start, end, (err, ...a) => err ? rej(Error(err)) : res(...a)))
   }
 
   getProperty(property) {
@@ -190,27 +191,33 @@ export class LevelDB implements DB {
   }
 
 
-  // 
+  /**
+   * Creates a new iterator with the specified options.
+   * @param options Iterator options
+   * @returns {Iterator}
+   */
   getIterator(options: IterOpts = {}) {
     if (this.status !== 'open') {
-      // Prevent segfault
       throw new Error('cannot call iterator() before open()')
     }
     Iterator._setupIteratorOptions(options)
     debug('iter using options', options)
     return new Iterator(this, options)
   }
-  // 
 
+  /**
+   * Delete all entries or a range.
+   */
+  async clear(options: ClearOpts) {
+    return new Promise((res, rej) => binding.clear(this.context, options, err => err ? rej(Error(err)) : res(true)))
+  }
 
   /**
    * destroy() is used to completely remove an existing LevelDB database directory. You can use this function in place of a full directory rm if you want to be sure to only remove LevelDB-related files. If the directory only contains LevelDB files, the directory itself will be removed as well. If there are additional, non-LevelDB files in the directory, those files, and the directory, will be left alone.
    * The callback will be called when the destroy operation is complete, with a possible error argument.
    */
-  destroy(location) {
-    return new Promise((res, rej) =>
-      binding.destroy_db(location, err => err ? rej(Error(err)) : res(true))
-    )
+  async destroy(location) {
+    return new Promise((res, rej) => binding.destroy_db(this.context, location, err => err ? rej(Error(err)) : res(true)))
   }
 
   /**
@@ -221,11 +228,10 @@ export class LevelDB implements DB {
    * You will find information on the repair operation in the LOG file inside the store directory.
    * 
    * A repair() can also be used to perform a compaction of the LevelDB log into table files.
-   * The callback will be called when the repair operation is complete, with a possible error argument.
    */
-  repair(location: string) {
+  async repair(location: string) {
     return new Promise((res, rej) =>
-      binding.repair_db(location, err => err ? rej(Error(err)) : res(true))
+      binding.repair_db(this.context, location, err => err ? rej(Error(err)) : res(true))
     )
   }
 }

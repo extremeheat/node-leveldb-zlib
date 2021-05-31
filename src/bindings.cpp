@@ -1291,7 +1291,12 @@ NAPI_METHOD(iterator_seek) {
   iterator->GetIterator();
 
   leveldb::Iterator* dbIterator = iterator->dbIterator_;
-  dbIterator->Seek(target);
+  if (target == "") {
+    if (iterator->reverse_) dbIterator->SeekToLast();
+    else dbIterator->SeekToFirst();
+  } else {
+    dbIterator->Seek(target);
+  }
 
   iterator->seeking_ = true;
   iterator->landed_ = false;
