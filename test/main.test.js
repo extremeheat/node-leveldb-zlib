@@ -5,7 +5,7 @@ const { join } = require('path')
 const assert = require('assert')
 
 it('create and write new db', async () => {
-  try { fs.mkdirSync('test') } catch { }
+  try { fs.mkdirSync(join(__dirname, 'test')) } catch { }
   let db = new LevelDB(join(__dirname, './test/test'), { createIfMissing: true })
   await db.open()
   await db.put('Hello', 'World!')
@@ -58,7 +58,7 @@ it('random read/write x10', async function () {
     promises.push(runTest(i, i % 2 == 0))
   }
   await Promise.all(promises)
-  cp.execSync(process.platform == 'win32' ? 'rmdir /s /q test' : 'rn -fr test', { cwd: __dirname })
+  cp.execSync(process.platform == 'win32' ? 'rmdir /s /q test' : 'rm -fr test', { cwd: __dirname })
 })
 
 it('minecraft', async () => {
