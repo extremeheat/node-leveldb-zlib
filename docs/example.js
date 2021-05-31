@@ -15,8 +15,8 @@ async function iterate(pathToDb) {
   const iter = db.getIterator({ values: true, keys: true })
   let entry
   while (entry = await iter.next()) {
-    const [ key, val ] = entry
-    console.log('next', entry, iter.finished)
+    const [ val, key ] = entry.map(k => String(k))
+    console.log('Read', key, val)
   }
   await db.close() // Make sure to save and close when you're done!  
 }

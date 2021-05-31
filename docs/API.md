@@ -1,20 +1,20 @@
-Most of the API is very smilar to leveldown, you can refer to the docs [here](https://github.com/Level/leveldown#db--leveldownlocation). The primary differences are that instead of callbacks, all the exposed API uses promises, and o acquire an iterator, use db.getIterator().
+Most of the API is very smilar to leveldown, you can refer to the docs [here](https://github.com/Level/leveldown#db--leveldownlocation). The primary differences are that instead of callbacks, all the exposed API uses promises, and to acquire an iterator, use db.getIterator().
 
-The primary API interface is the LevelDB class. It takes a path and optional options paramater, with the defaults to not create a database if it doesn't exist.
+The primary API interface is the LevelDB class. It takes a path and optional options paramater. The default option is to not create a database if it doesn't exist.
 
 The keys and values can be either Buffers or Strings: strings will be converted to a buffer automatically.
 
 ```js
   const db = new LevelDB(pathToDb, { createIfMissing: true })
   await db.open() // Make sure to wait for DB to open!
+  await db.put('Hello', 'World')
   const iter = db.getIterator({ values: true, keys: true })
   let entry
   while (entry = await iter.next()) {
-    const [ key, val ] = entry
-    console.log('next', entry, iter.finished)
+    const [ val, key ] = entry.map(k => String(k))
+    console.log('Read', key, val)
   }
   await db.close() // Make sure to save and close when you're done!  
-
 ```
 
 See [example.js](./example.js) for an simple example program.
