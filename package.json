@@ -1,6 +1,6 @@
 {
   "name": "leveldb-zlib",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Node.js bindings for LevelDB with zlib",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "prepare": "tsc",
     "build": "tsc",
     "postci": "node helpers/postCI.js",
+    "prepublish": "cd helpers && node npmPublish.js",
     "test": "npm run build && mocha"
   },
   "author": "extremeheat",
