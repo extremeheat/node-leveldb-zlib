@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const { LevelDB } = require('leveldb-zlib')
 const assert = require('assert')
 const fs = require('fs')

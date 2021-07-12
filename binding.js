@@ -2,12 +2,12 @@ const helper = require('./helpers/buildPath.js')
 const path = require('path')
 const debug = require('debug')('leveldb')
 
-if (!process.versions.electron) { 
+if (!process.versions.electron) {
   // Electron has its own crash handler, and segfault-handler
   // uses NAN which is a hassle, so only load outside electron
   try {
     var SegfaultHandler = require('segfault-handler')
-    SegfaultHandler.registerHandler("crash.log")
+    SegfaultHandler.registerHandler('crash.log')
   } catch (e) {
     debug('[leveldb] segfault handler is not installed. If you run into crashing issues, install it with `npm i -D segfault-handler` to get debug info on native crashes')
   }

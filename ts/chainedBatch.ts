@@ -2,25 +2,25 @@ const binding = require('../binding')
 
 export class ChainedBatch {
   context
-  
-  constructor(db) {
+
+  constructor (db) {
     this.context = db.context
   }
 
-  put(key: Buffer, value: Buffer) {
+  put (key: Buffer, value: Buffer) {
     binding.batch_put(this.context, key, value)
   }
 
-  delete(key: Buffer) {
+  delete (key: Buffer) {
     binding.batch_del(this.context, key)
   }
 
-  clear() {
+  clear () {
     binding.batch_clear(this.context)
   }
 
-  write(options) {
-    return new Promise((res, rej) => {
+  async write (options) {
+    return await new Promise((res, rej) => {
       binding.batch_write(this.context, options, err => err ? rej(err) : res(err))
     })
   }

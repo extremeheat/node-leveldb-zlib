@@ -6,7 +6,7 @@ export class Iterator {
   context; cache
   finished: boolean
   db
-  constructor(db, options) {
+  constructor (db, options) {
     this.db = db
     this.context = binding.iterator_init(db.context, options)
     this.cache = null
@@ -17,14 +17,14 @@ export class Iterator {
    * Seek to a position
    * @param target Key to seek to. Empty string for start or end if reversed.
    */
-  seek(target) {
+  seek (target) {
     if (target == null) throw Error('invalid seek target')
     binding.iterator_seek(this.context, target)
     this.finished = false
   }
 
-  private _next(): Promise<any> {
-    return new Promise((res, rej) => {
+  private async _next (): Promise<any> {
+    return await new Promise((res, rej) => {
       binding.iterator_next(this.context, (err, array, finished) => {
         if (err) {
           rej(err)
@@ -36,7 +36,7 @@ export class Iterator {
     })
   }
 
-  async next() {
+  async next () {
     if (this.#lock) await this.#lock
     if (this.finished) return null
     this.#lock = this._next()
@@ -45,42 +45,42 @@ export class Iterator {
     return val.finished ? null : val.array
   }
 
-  end() {
-    return new Promise((res, rej) => {
+  async end () {
+    return await new Promise((res, rej) => {
       delete this.cache
       binding.iterator_end(this.context, err => err ? rej(err) : res(true))
     })
   }
 
-  // 
+  //
 
   static readonly rangeOptions = 'start end gt gte lt lte'.split(' ')
 
   static isRangeOption (k) {
-    return Iterator.rangeOptions.indexOf(k) !== -1
+    return Iterator.rangeOptions.includes(k)
   }
 
   static cleanRangeOptions (options) {
     var result = {}
-  
+
     for (var k in options) {
       if (!Object.prototype.hasOwnProperty.call(options, k)) continue
-  
+
       var opt = options[k]
-  
+
       if (this.isRangeOption(k)) {
         // Note that we don't reject nullish and empty options here. While
         // those types are invalid as keys, they are valid as range options.
         opt = Buffer.isBuffer(opt) ? opt : String(opt)
       }
-  
+
       result[k] = opt
     }
-  
+
     return result
   }
 
-  static _setupIteratorOptions(options: any = {}) {
+  static _setupIteratorOptions (options: any = {}) {
     this.cleanRangeOptions(options)
     options.reverse = !!options.reverse
     options.keys = options.keys !== false

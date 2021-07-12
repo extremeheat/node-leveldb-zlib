@@ -1,6 +1,6 @@
 {
   "name": "leveldb-zlib",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Node.js bindings for LevelDB with zlib",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "leveldb-zlib": "file:.",
     "segfault-handler": "^1.3.0",
     "ts-node": "^9.1.1",
+    "ts-standard": "^10.0.0",
     "typescript": "^4.1.3"
   },
   "dependencies": {

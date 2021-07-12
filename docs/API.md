@@ -24,51 +24,11 @@ The types exported in this library are below.
 #### LevelDB
 
 ```ts
-export declare type LevelDBOptions = {
-    bufferKeys?: boolean;
-    snapshots?: boolean;
-    permanence?: boolean;
-    seek?: boolean;
-    clear?: boolean;
-    createIfMissing?: boolean;
-    errorIfExists?: boolean;
-    additionalMethods?: {
-        approximateSize?: boolean;
-        compactRange?: boolean;
-    };
-};
-export declare type Operation = {
-    type: 'del' | 'put';
-    key: Buffer | string;
-    value?: Buffer | string;
-};
-export declare type OpOpts = {
-    sync?: boolean;
-};
-export declare type IterOpts = {
-    reverse?: boolean;
-    keys?: boolean;
-    values?: boolean;
-    fillCache?: boolean;
-    keyAsBuffer?: boolean;
-    valueAsBuffer?: boolean;
-    limit?: number;
-    highWaterMark?: boolean;
-    end?: any;
-    lt?: any;
-    lte?: any;
-    gt?: any;
-    gte?: any;
-};
-export declare type ClearOpts = {
-    gt?: any;
-    gte?: any;
-    lt?: any;
-    lte?: any;
-    reverse: boolean;
-    limit: number;
-};
 export declare class LevelDB {
+    context: any;
+    path: string;
+    options: LevelDBOptions;
+    status: string;
     constructor(path: string, options?: LevelDBOptions);
     /**
      * Opens the database.
@@ -106,7 +66,7 @@ export declare class LevelDB {
      * destroy() is used to completely remove an existing LevelDB database directory. You can use this function in place of a full directory rm if you want to be sure to only remove LevelDB-related files. If the directory only contains LevelDB files, the directory itself will be removed as well. If there are additional, non-LevelDB files in the directory, those files, and the directory, will be left alone.
      * The callback will be called when the destroy operation is complete, with a possible error argument.
      */
-    destroy(location: any): Promise<unknown>;
+    static destroy(location: any): Promise<unknown>;
     /**
      * repair() can be used to attempt a restoration of a damaged LevelDB store. From the LevelDB documentation:
      *
@@ -116,9 +76,8 @@ export declare class LevelDB {
      *
      * A repair() can also be used to perform a compaction of the LevelDB log into table files.
      */
-    repair(location: string): Promise<unknown>;
+    static repair(location: string): Promise<unknown>;
 }
-
 ```
 
 #### Iterator

@@ -1,5 +1,4 @@
-var fs = require('fs')
-var cp = require('child_process')
+const cp = require('child_process')
 
 // var packageJson = fs.readFileSync('../package.json', 'utf-8')
 
