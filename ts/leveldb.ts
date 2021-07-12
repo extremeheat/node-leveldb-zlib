@@ -73,7 +73,7 @@ export class LevelDB {
     return new Promise((res, rej) => {
       binding.db_open(this.context, this.path, this.options, (err) => {
         if (err) {
-          console.warn('[leveldb] Failed to open db ', this.path, this.options, err)
+          debug('[leveldb] Failed to open db ', this.path, this.options, err)
           rej(Error(err))
         } else {
           this.status = 'open'
@@ -94,7 +94,11 @@ export class LevelDB {
    * @returns {Promise} Resolves when the database has been opened.
    */
   async close() {
-    if (!this.isOpen()) return
+    if (!this.isOpen()) {
+      this.status = 'closed'
+      globalThis.levelDbOpened.delete(this.path)
+      return
+    }
     return new Promise((res, rej) =>
       binding.db_close(this.context, (err) => {
         if (err) {
@@ -216,8 +220,8 @@ export class LevelDB {
    * destroy() is used to completely remove an existing LevelDB database directory. You can use this function in place of a full directory rm if you want to be sure to only remove LevelDB-related files. If the directory only contains LevelDB files, the directory itself will be removed as well. If there are additional, non-LevelDB files in the directory, those files, and the directory, will be left alone.
    * The callback will be called when the destroy operation is complete, with a possible error argument.
    */
-  async destroy(location) {
-    return new Promise((res, rej) => binding.destroy_db(this.context, location, err => err ? rej(Error(err)) : res(true)))
+  static async destroy(location) {
+    return new Promise((res, rej) => binding.destroy_db(location, err => err ? rej(Error(err)) : res(true)))
   }
 
   /**
@@ -229,9 +233,9 @@ export class LevelDB {
    * 
    * A repair() can also be used to perform a compaction of the LevelDB log into table files.
    */
-  async repair(location: string) {
+  static async repair(location: string) {
     return new Promise((res, rej) =>
-      binding.repair_db(this.context, location, err => err ? rej(Error(err)) : res(true))
+      binding.repair_db(location, err => err ? rej(Error(err)) : res(true))
     )
   }
 }
