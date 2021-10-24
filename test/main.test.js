@@ -185,7 +185,7 @@ it('minecraft', async () => {
   while (entry = await iter.next()) {
     // console.log('[mc] readKey: ', entry, entry[0].length)
 
-    const read = readKey(entry[0])
+    const read = readKey(entry[1])
     if (read.length) {
       console.log(JSON.stringify(read))
     } else {
