@@ -8,7 +8,7 @@ The keys and values can be either Buffers or Strings: strings will be converted 
   const db = new LevelDB(pathToDb, { createIfMissing: true })
   await db.open() // Make sure to wait for DB to open!
   await db.put('Hello', 'World')
-  const iter = db.getIterator({ values: true, keys: true })
+  const iter = db.getIterator({ values: true, keys: true }) // Both `keys` and `values` default to true
   let entry
   while (entry = await iter.next()) {
     const [ val, key ] = entry.map(k => String(k))
@@ -84,7 +84,14 @@ export declare class LevelDB {
 
 ````ts
 export declare class Iterator {
-    constructor(db: any, options: any);
+    constructor(db: any, options: {
+      reverse = false
+      keys = true
+      values = true
+      limit?
+      keyAsBuffer?
+      valueAsBuffer?
+    });
     /**
      * Seek to a position
      * @param target Key to seek to. Empty string for start or end if reversed.

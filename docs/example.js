@@ -12,7 +12,7 @@ async function basicTest (pathToDb) {
 async function iterate (pathToDb) {
   const db = new LevelDB(pathToDb)
   await db.open() // Make sure to wait for DB to open!
-  const iter = db.getIterator({ values: true, keys: true })
+  const iter = db.getIterator({ values: true, keys: true }) // Both `keys` and `values` default to true
   let entry
   while (entry = await iter.next()) {
     const [val, key] = entry.map(k => String(k))
