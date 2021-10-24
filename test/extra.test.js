@@ -84,3 +84,22 @@ it('can repair broken databases', async function () {
 it('can destroy databases', async function () {
   await testDestory()
 })
+
+it('can iterate the db', async function () {
+  try { fs.rmSync('./db', { recursive: true }) } catch {}
+  const db = new LevelDB('./db', { createIfMissing: true })
+  await db.open()
+  const keys = ['Key1', 'Key2', 'Key3']
+  for (const key of keys) {
+    await db.put(key, 'Value')
+  }
+  const iter = db.getIterator({ values: true, keys: true })
+
+  let i, entry
+  for (i = 0; entry = await iter.next(); i++) {
+    const [val, key] = entry.map(k => String(k))
+    assert.ok(key === keys[i])
+    assert.ok(val === 'Value')
+  }
+  assert.strictEqual(i, 3)
+})

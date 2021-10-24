@@ -3,14 +3,14 @@ const binding = require('../binding')
 export class Iterator {
   #lock?: Promise<any>
 
-  context; cache
-  finished: boolean
+  context
+  cache = []
+  finished = false
   db
+
   constructor (db, options) {
     this.db = db
     this.context = binding.iterator_init(db.context, options)
-    this.cache = null
-    this.finished = false
   }
 
   /**
@@ -29,8 +29,9 @@ export class Iterator {
         if (err) {
           rej(err)
         } else {
+          this.cache = array
           this.finished = finished
-          res({ array, finished })
+          res(null)
         }
       })
     })
@@ -38,11 +39,11 @@ export class Iterator {
 
   async next () {
     if (this.#lock) await this.#lock
+    if (this.cache.length > 0) return this.cache.splice(-2, 2)
     if (this.finished) return null
-    this.#lock = this._next()
-    const val = await this.#lock
+    await (this.#lock = this._next())
     this.#lock = null
-    return val.finished ? null : val.array
+    return this.cache.length ? this.cache.splice(-2, 2) : null
   }
 
   async end () {
