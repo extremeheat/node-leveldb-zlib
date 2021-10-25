@@ -1,3 +1,6 @@
+## 1.1.1
+* Fix iterators not return all values [#8](https://github.com/extremeheat/node-leveldb-zlib/issues/8), [#9](https://github.com/extremeheat/node-leveldb-zlib/pull/9)
+
 ## 1.1.0
 * Fix `LevelDB.repair()` and `LevelDB.destory()` methods, and make them static, use as such:
 ```js
