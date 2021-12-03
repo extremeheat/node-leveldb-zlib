@@ -14,7 +14,7 @@ function checkIfPrebuildExists () {
   }
 }
 
-var runCmake = true
+let runCmake = true
 
 if (!process.env.FORCE_BUILD) {
   if (checkIfPrebuildExists()) {

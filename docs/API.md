@@ -8,13 +8,10 @@ The keys and values can be either Buffers or Strings: strings will be converted 
   const db = new LevelDB(pathToDb, { createIfMissing: true })
   await db.open() // Make sure to wait for DB to open!
   await db.put('Hello', 'World')
-  const iter = db.getIterator({ values: true, keys: true }) // Both `keys` and `values` default to true
-  let entry
-  while (entry = await iter.next()) {
-    const [ val, key ] = entry.map(k => String(k))
+  for await (const [key, val] = await db.getIterator({ keyAsBuffer: false, valueAsBuffer: false })) {
     console.log('Read', key, val)
   }
-  await db.close() // Make sure to save and close when you're done!  
+  await db.close() // Make sure to save and close when you're done!
 ```
 
 See [example.js](./example.js) for an simple example program.

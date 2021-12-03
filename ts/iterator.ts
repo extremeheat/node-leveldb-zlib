@@ -43,7 +43,7 @@ export class Iterator {
     if (this.finished) return null
     await (this.#lock = this._next())
     this.#lock = null
-    return this.cache.length ? this.cache.splice(-2, 2) : null
+    return (this.cache.length > 0) ? this.cache.splice(-2, 2) : null
   }
 
   async end () {
@@ -51,6 +51,15 @@ export class Iterator {
       delete this.cache
       binding.iterator_end(this.context, err => err ? rej(err) : res(true))
     })
+  }
+
+  async * [Symbol.asyncIterator] () {
+    let next
+    while (next = await this.next()) {
+      const [value, key] = next
+      yield [key, value]
+    }
+    this.end()
   }
 
   //
@@ -62,12 +71,12 @@ export class Iterator {
   }
 
   static cleanRangeOptions (options) {
-    var result = {}
+    const result = {}
 
-    for (var k in options) {
+    for (const k in options) {
       if (!Object.prototype.hasOwnProperty.call(options, k)) continue
 
-      var opt = options[k]
+      let opt = options[k]
 
       if (this.isRangeOption(k)) {
         // Note that we don't reject nullish and empty options here. While
