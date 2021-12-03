@@ -12,7 +12,7 @@ it('create and write new db', async () => {
   await db.put('Hello', 'World!')
   await db.put('I', 'Like')
   const f32a = new Float32Array(10)
-  for (var i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     f32a[i] = (3.14159 * Math.random())
   }
   await db.put('Pi', Buffer.from(f32a.buffer))
@@ -55,7 +55,7 @@ it('random read/write x10', async function () {
   }
 
   const promises = []
-  for (var i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     promises.push(runTest(i, i % 2 === 0))
   }
   await Promise.all(promises)
@@ -65,7 +65,7 @@ it('random read/write x10', async function () {
 it('minecraft', async () => {
   const path = join(__dirname, './mctestdb')
 
-  var Tag = {}
+  const Tag = {}
   Tag[Tag.VersionNew = 44] = 'VersionNew'
   Tag[Tag.Data2D = 45] = 'Data2D'
   Tag[Tag.Data2DLegacy = 46] = 'Data2DLegacy'
