@@ -208,6 +208,15 @@ export class LevelDB {
     return new Iterator(this, options)
   }
 
+  async * [Symbol.asyncIterator] () {
+    const it = this.getIterator()
+    let next
+    while (next = await it.next()) {
+      const [value, key] = next
+      yield [key, value]
+    }
+  }
+
   /**
    * Delete all entries or a range.
    */

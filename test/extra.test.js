@@ -102,4 +102,29 @@ it('can iterate the db', async function () {
     assert.ok(val === 'Value')
   }
   assert.strictEqual(i, 3)
+  await db.close()
+})
+
+it('can iterate with asyncIterator', async function () {
+  try { fs.rmSync('./db', { recursive: true }) } catch {}
+  const db = new LevelDB('./db', { createIfMissing: true })
+  await db.open()
+  const keys = ['Key1', 'Key2', 'Key3']
+
+  for (const key of keys) {
+    await db.put(key, 'Value')
+  }
+
+  for await (const [key, val] of db) {
+    continue
+  }
+
+  let i = 0
+  for await (const [key, val] of db.getIterator({ keyAsBuffer: false, valueAsBuffer: false })) {
+    assert.strictEqual(key, keys[i++])
+    assert.strictEqual(val, 'Value')
+  }
+
+  assert.strictEqual(i, 3)
+  await db.close()
 })
