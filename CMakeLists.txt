@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 if (WIN32)
     include( helpers/CMakeExtras.txt OPTIONAL )
