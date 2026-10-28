@@ -34,7 +34,7 @@ elseif (WIN32)
     add_definitions(-DLEVELDB_PLATFORM_WINDOWS "-DDLLX=__declspec(dllexport)")
 endif()
 
-include_directories("leveldb-mcpe/include"})
+include_directories("leveldb-mcpe/include")
 
 include_directories(${CMAKE_JS_INC})
 file(GLOB SOURCE_FILES "src/*.cpp" "src/*.h")
