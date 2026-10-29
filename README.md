@@ -64,3 +64,23 @@ Then [set environment variable](https://www.onmsft.com/how-to/how-to-set-an-envi
 ## API
 
 See [API.md](docs/API.md)
+
+## Publishing releases
+
+After CI passes on a push to `master`, `.github/workflows/ci.yml` publishes a
+newer `package.json` version to npm and creates a GitHub release. Existing npm
+versions are skipped. Native artifacts from all three build jobs are included
+by the `prepublish` script during the release job's `npm install`.
+
+Publishing uses npm Trusted Publishing (OIDC), without an npm token secret.
+In the `leveldb-zlib` package settings on npmjs.com, add a GitHub Actions
+trusted publisher with:
+
+- Organization or user: `extremeheat`
+- Repository: `node-leveldb-zlib`
+- Workflow filename: `ci.yml`
+- Environment name: leave blank
+- Allowed actions: enable direct publishing with `npm publish`
+
+See the [npm Trusted Publishing documentation](https://docs.npmjs.com/trusted-publishers/).
+This npm-side setup must be completed before publishing a new version.
