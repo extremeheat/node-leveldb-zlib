@@ -23,6 +23,12 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 project( node-leveldb )
+# The bundled LevelDB still requests CMake 3.2 policies, which CMake 4 removed.
+# Set a compatibility floor for the dependency without modifying the submodule.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0" AND
+   (NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM OR CMAKE_POLICY_VERSION_MINIMUM VERSION_LESS "3.5"))
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+endif()
 add_subdirectory( leveldb-mcpe )
 
 if (UNIX)
