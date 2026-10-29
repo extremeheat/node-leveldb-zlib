@@ -1,6 +1,4 @@
 ## 1.2.1
-* [Add GitHub Actions workflow for repo commands](https://github.com/extremeheat/node-leveldb-zlib/commit/2d3f715899b91d2e99a1931ab21480291192c77c) (thanks @extremeheat)
-* [Use npm Trusted Publishing for releases](https://github.com/extremeheat/node-leveldb-zlib/commit/a3412e0829de1e1b01a29da55af1f02da2d4a877) (thanks @extremeheat)
 * [Modernize CI and restore native artifact builds (#14)](https://github.com/extremeheat/node-leveldb-zlib/commit/d6e917b204c70e3f5962046c86ff26a465501db0) (thanks @Copilot)
 
 ## 1.2.0
