@@ -15,18 +15,21 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [16.x]
+        node-version: [20.x]
         
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Install Linux dependencies
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install -y zlib1g-dev
     - run: npm install
     - run: npm run build --if-present
     - run: npm test
@@ -35,11 +38,12 @@ jobs:
     # - name: Display structure of downloaded files
     #   run: ls -R
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: dist-${{ steps.postci.outputs.PLATFORM_STRING }}
         path: |
           build/Release/*
+        if-no-files-found: error
   debug:
     runs-on: ubuntu-latest
     steps:
@@ -50,17 +54,17 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/heads/master')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 20.x
           registry-url: https://registry.npmjs.org/
 
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           path: helpers
       - run: npm install

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 if (WIN32)
     include( helpers/CMakeExtras.txt OPTIONAL )
@@ -23,6 +23,12 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 project( node-leveldb )
+# The bundled LevelDB still requests CMake 3.2 policies, which CMake 4 removed.
+# Set a compatibility floor for the dependency without modifying the submodule.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0" AND
+   (NOT DEFINED CMAKE_POLICY_VERSION_MINIMUM OR CMAKE_POLICY_VERSION_MINIMUM VERSION_LESS "3.5"))
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+endif()
 add_subdirectory( leveldb-mcpe )
 
 if (UNIX)
@@ -34,7 +40,7 @@ elseif (WIN32)
     add_definitions(-DLEVELDB_PLATFORM_WINDOWS "-DDLLX=__declspec(dllexport)")
 endif()
 
-include_directories("leveldb-mcpe/include"})
+include_directories("leveldb-mcpe/include")
 
 include_directories(${CMAKE_JS_INC})
 file(GLOB SOURCE_FILES "src/*.cpp" "src/*.h")
