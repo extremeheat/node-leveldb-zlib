@@ -1,3 +1,6 @@
+## 1.2.1
+* [Modernize CI and restore native artifact builds (#14)](https://github.com/extremeheat/node-leveldb-zlib/commit/d6e917b204c70e3f5962046c86ff26a465501db0) (thanks @Copilot)
+
 ## 1.2.0
 * Add async iterator support for LevelDB and Iterator, use with `for await`
 
